@@ -5,18 +5,21 @@ RUN apk update
 RUN apk add bash openjdk7
 
 #set working directory
-WORKDIR /root
+WORKDIR /root/
 
-#get zk
-RUN wget http://apache.claz.org/zookeeper/stable/zookeeper-3.4.6.tar.gz && \
-    tar -xzf zookeeper-3.4.6.tar.gz && \
-    rm -f zookeeper-3.4.6.tar.gz
+#get kafka
+RUN wget http://apache.claz.org/kafka/0.8.2.2/kafka_2.11-0.8.2.2.tgz && \
+    tar -xzf kafka_2.11-0.8.2.2.tgz && \
+    rm -f kafka_2.11-0.8.2.2.tgz
 
-#add our custom config
-ADD ./src /root/zookeeper-3.4.6/conf
+WORKDIR /root/kafka_2.11-0.8.2.2/
+#add our custom config and sh script
+ADD ./src ./config
+ADD startKafka.sh ./
+RUN chmod 777 startKafka.sh
 
 #run the server
-CMD /root/zookeeper-3.4.6/bin/zkServer.sh start-foreground
+CMD ./startKafka.sh
 
 
 
